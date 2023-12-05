@@ -10,14 +10,18 @@ def read_qr_code(image_path):
 
     # Print the decoded information
     for obj in decoded_objects:
-        print(f'Type: {obj.type}')
+        # print(f'Type: {obj.type}')
         # print(f'Data: {obj.data.decode("utf-8")}')
         print(f'Data: {obj.data}')
         print()
 
-    return decoded_objects
+    return obj.data
 
 # Replace 'your_qr_code_image.jpg' with the path to your QR code image
-qr_code_path = 'model.png'
-decoded_objects = read_qr_code(qr_code_path)
+qr_code_path = 'code.png'
+data = read_qr_code(qr_code_path)
+
+file_path2 = r"models/test_write.onnx.gz"
+with open(file_path2, 'wb') as f:
+    f.write(data)
 

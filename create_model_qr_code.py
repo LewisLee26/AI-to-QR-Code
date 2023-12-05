@@ -1,25 +1,25 @@
 import qrcode
-import base64
 
 file_path = r"models/pruned_model.onnx.gz"
 
-x = b""
 with open(file_path, 'rb') as f:
-    for chunk in iter(lambda: f.read(8), b''):
-        x += chunk
+    file_bytes = f.read()
 
-print(x)
+data = qrcode.util.QRData(file_bytes, mode=qrcode.util.MODE_8BIT_BYTE , check_data=False)
 
 qr = qrcode.QRCode(
     version=40,
     error_correction=qrcode.constants.ERROR_CORRECT_L,
-    box_size=10,
+    box_size=5,
     border=4,
 )
 
-qr.add_data(x, optimize=0)
-# qr.add_data("Hello world!", optimize=20)
-qr.make(fit=True)
+qr.add_data(file_bytes, optimize=0)
+
+# print(qrcode.util.create_data(qr.version, qr.error_correction, qr.data_list))
+
+qr.make(fit=False)
 
 img = qr.make_image(fill_color="black", back_color="white")
 img.save("model.png")
+
