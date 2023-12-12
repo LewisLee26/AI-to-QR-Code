@@ -2,7 +2,7 @@
 
 # Project Summary
 
-The aim of this project is to compress models to a point where they can fit on a single QR code, which is 2, 953 bytes. 
+The aim of this project is to compress models to a point where they can fit on a single QR code, which is 2,953 bytes. 
 
 # Model Specifications
 
