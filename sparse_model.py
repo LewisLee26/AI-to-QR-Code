@@ -50,22 +50,25 @@ if __name__ == '__main__':
 
     testQuantAware(args, model, device, test_loader, stats, act_quant, num_bits=num_bits)
 
-    parameters_to_prune = (
-        (model.conv1, 'weight'),
-        (model.conv2, 'weight'),
-        (model.fc1, 'weight'),
-    )
+    count_masked_parameters = 0
+    for name, module in model.named_modules():
+        if isinstance(module, nn.Conv2d):
+            prune.l1_unstructured(module, name='weight', amount=0.85)
+            # use the mask, do not remove the weights 
+            mask = module.weight_mask  # Get the pruning mask
+            count_masked_parameters += torch.sum(mask != 0).item()  # Count non-zero elements in the mask
+        elif isinstance(module, nn.Linear):
+            prune.l1_unstructured(module, name='weight', amount=0.9)
+            mask = module.weight_mask  # Get the pruning mask
+            count_masked_parameters += torch.sum(mask != 0).item()  # Count non-zero elements in the mask
+    
+    print(f'The model has {count_masked_parameters} masked parameters')
 
-    prune.global_unstructured(
-        parameters_to_prune,
-        pruning_method=prune.L1Unstructured,
-        amount=0.87,
-    )
 
     testQuantAware(args, model, device, test_loader, stats, act_quant, num_bits=num_bits)
 
     for epoch in range(1, epochs + 1):
-        if epoch > 1:
+        if epoch > 2:
           act_quant = True 
         else:
           act_quant = False
@@ -73,9 +76,9 @@ if __name__ == '__main__':
         stats = trainQuantAware(args, model, device, train_loader, optimizer, epoch, stats, act_quant, num_bits=num_bits)
         testQuantAware(args, model, device, test_loader, stats, act_quant, num_bits=num_bits)
 
-    # torch.save(model, r"models/pruned_model.pth")
+    torch.save(model, r"models/mnist_cnn_pruned.pth")
 
-    torch.onnx.export(model, torch.randn(1, 1, 28, 28).to(device), 'models/pruned_model.onnx')
+    torch.onnx.export(model, torch.randn(1, 1, 28, 28).to(device), 'models/mnist_cnn_pruned.onnx')
 
-    with gzip.open('models/pruned_model.onnx.gz', 'wb') as f:
+    with gzip.open('models/mnist_cnn_pruned.gz', 'wb') as f:
         torch.onnx.export(model, torch.randn(1, 1, 28, 28).to(device), f)

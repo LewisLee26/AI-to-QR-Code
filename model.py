@@ -21,9 +21,6 @@ class Net(nn.Module):
    
       
     def forward(self, x, vis=False, axs=None):
-        X = 0
-        y = 0
-
         x = F.relu(self.conv1(x))
 
         x = F.max_pool2d(x, 2, 2)

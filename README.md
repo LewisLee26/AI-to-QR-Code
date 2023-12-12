@@ -1,14 +1,28 @@
 # AI-to-QR-Code
 
-## Overview
-This project explores the limits of model compression and representation. The goal is to shrink a MNIST (handwritten digit recognition) model to fit within the constraints of a QR code (2,953 bytes). 
+# Project Summary
 
-## Current Model
-The model is made up of two convolutional layers and one dense layer.
-When fully compressed the model is 2,640 bytes.
-It achievies a 89% accuracy on the MNIST dataset.
+The aim of this project is to compress models to a point where they can fit on a single QR code, which is 2, 953 bytes. 
+
+# Model Specifications
+
+## Overview
+
+The model, when fully compressed, measures 2,579 bytes and boasts an impressive accuracy of 92% on the MNIST dataset.
 
 ![Model QRcode PNG](model.png)
 
-*This QR-code doesn't currently work due to a bug in the qrcode python encoding module that is corrupting the gzip binary* 
+*Please note, the QR code representation of the model is currently non-functional due to a bug in the qrcode Python package that corrupts the gzip binary.*
+
+## Architecture
+
+The model architecture consists of two convolutional layers (with a kernel size of 5) followed by a linear layer that connects to the output layer.
+
+## Quantization
+
+To further reduce the model size, 3-bit (0 - 7) quantization aware training has been implemented.
+
+## Pruning
+
+To optimize the model’s efficiency, we have applied L1-norm local pruning on the weights, with a pruning rate of 85% on the convolutional layers and 90% on the linear layer.
 
